@@ -41,9 +41,28 @@ final class AppModel: ObservableObject {
 
     func saveSelection() {
         sharedStore.selection = selection
-        statusMessage = selectedCount == 0
-            ? "Select at least one app or website before starting."
-            : "Selection saved."
+
+        guard selectedCount > 0 else {
+            if isMonitoring {
+                scheduler.stopMonitoring()
+                isMonitoring = false
+            }
+            statusMessage = "Select at least one app or website before starting."
+            return
+        }
+
+        guard isMonitoring else {
+            statusMessage = "Selection saved."
+            return
+        }
+
+        do {
+            try scheduler.startMonitoring(selection: selection)
+            statusMessage = "Selection saved and monitoring restarted."
+        } catch {
+            isMonitoring = false
+            statusMessage = "Selection saved, but monitoring could not restart: \(error.localizedDescription)"
+        }
     }
 
     func saveSettings() {

@@ -41,7 +41,7 @@ jobs:
         run: |
           xcodebuild \
             -project FatCatBreak.xcodeproj \
-            -target FatCatBreak \
+            -scheme FatCatBreak \
             -configuration Debug \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \

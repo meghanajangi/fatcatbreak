@@ -37,7 +37,7 @@ struct ContentView: View {
             await model.requestAuthorization()
             model.refreshBreakState()
         }
-        .onChange(of: isPickerPresented) { _, isPresented in
+        .onChange(of: isPickerPresented) { isPresented in
             if !isPresented {
                 model.saveSelection()
             }
@@ -93,8 +93,8 @@ struct ContentView: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.white.opacity(0.7), in: RoundedRectangle(cornerRadius: 8))
-        .onChange(of: model.usageLimitMinutes) { _, _ in model.saveSettings() }
-        .onChange(of: model.breakMinutes) { _, _ in model.saveSettings() }
+        .onChange(of: model.usageLimitMinutes) { _ in model.saveSettings() }
+        .onChange(of: model.breakMinutes) { _ in model.saveSettings() }
     }
 
     private var controls: some View {
