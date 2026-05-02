@@ -12,18 +12,15 @@ struct CatBreakView: View {
     @State private var bounce = false
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let breakBackground = Color(red: 1.0, green: 0.93, blue: 0.68)
 
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
 
             CatBreakVideoView()
-                .frame(width: 320, height: 240)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(.black.opacity(0.12), lineWidth: 1)
-                )
+                .aspectRatio(4 / 3, contentMode: .fit)
+                .frame(maxWidth: 320)
                 .offset(x: entered ? 0 : 340)
                 .offset(y: bounce ? -8 : 6)
                 .animation(.spring(response: 0.72, dampingFraction: 0.66), value: entered)
@@ -59,7 +56,7 @@ struct CatBreakView: View {
         }
         .padding(28)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(red: 1.0, green: 0.93, blue: 0.68).opacity(0.98))
+        .background(breakBackground.opacity(0.98))
         .foregroundStyle(.black)
         .onAppear {
             entered = true
@@ -87,17 +84,16 @@ struct CatBreakView: View {
 private struct CatBreakVideoView: View {
     var body: some View {
         if Bundle.main.url(forResource: "Firefly-fluffy-graycat", withExtension: "mp4") != nil {
-            LoopingVideoView(resourceName: "Firefly-fluffy-graycat", fileExtension: "mp4")
+            OneShotVideoView(resourceName: "Firefly-fluffy-graycat", fileExtension: "mp4")
         } else {
             GatekeeperCatShape()
                 .padding(16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(red: 1.0, green: 0.85, blue: 0.54))
         }
     }
 }
 
-private struct LoopingVideoView: UIViewRepresentable {
+private struct OneShotVideoView: UIViewRepresentable {
     let resourceName: String
     let fileExtension: String
 
@@ -107,7 +103,11 @@ private struct LoopingVideoView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> PlayerContainerView {
         let view = PlayerContainerView()
-        view.playerLayer.videoGravity = .resizeAspectFill
+        view.backgroundColor = .clear
+        view.isOpaque = false
+        view.playerLayer.backgroundColor = UIColor.clear.cgColor
+        view.playerLayer.isOpaque = false
+        view.playerLayer.videoGravity = .resizeAspect
 
         guard let url = Bundle.main.url(forResource: resourceName, withExtension: fileExtension) else {
             return view
@@ -115,16 +115,9 @@ private struct LoopingVideoView: UIViewRepresentable {
 
         let player = AVPlayer(url: url)
         player.isMuted = true
-        player.actionAtItemEnd = .none
+        player.actionAtItemEnd = .pause
         view.playerLayer.player = player
         context.coordinator.player = player
-
-        NotificationCenter.default.addObserver(
-            context.coordinator,
-            selector: #selector(Coordinator.restartVideo),
-            name: .AVPlayerItemDidPlayToEndTime,
-            object: player.currentItem
-        )
 
         player.play()
         return view
@@ -136,20 +129,26 @@ private struct LoopingVideoView: UIViewRepresentable {
 
     static func dismantleUIView(_ uiView: PlayerContainerView, coordinator: Coordinator) {
         coordinator.player?.pause()
-        NotificationCenter.default.removeObserver(coordinator)
     }
 
     final class Coordinator: NSObject {
         var player: AVPlayer?
-
-        @objc func restartVideo() {
-            player?.seek(to: .zero)
-            player?.play()
-        }
     }
 }
 
 private final class PlayerContainerView: UIView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        isOpaque = false
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        backgroundColor = .clear
+        isOpaque = false
+    }
+
     override static var layerClass: AnyClass {
         AVPlayerLayer.self
     }
