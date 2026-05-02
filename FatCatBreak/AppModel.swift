@@ -21,6 +21,11 @@ final class AppModel: ObservableObject {
     }
 
     func refreshBreakState() {
+        guard sharedStore.breakUntil != nil else {
+            breakUntil = nil
+            return
+        }
+
         scheduler.endBreakIfExpired()
         breakUntil = sharedStore.breakUntil
     }
@@ -106,19 +111,10 @@ final class AppModel: ObservableObject {
     }
 
     func previewBreak() {
-        sharedStore.selection = selection
-        saveSettings()
-
-        do {
-            try scheduler.beginBreak()
-            breakUntil = sharedStore.breakUntil
-            statusMessage = "Previewing the cat break."
-        } catch {
-            scheduler.clearShield()
-            sharedStore.clearBreak()
-            breakUntil = nil
-            statusMessage = "Could not start the cat break: \(error.localizedDescription)"
-        }
+        sharedStore.usageLimitMinutes = usageLimitMinutes
+        sharedStore.breakMinutes = breakMinutes
+        breakUntil = Date().addingTimeInterval(TimeInterval(breakMinutes * 60))
+        statusMessage = "Previewing the cat break. Screen Time shielding is not active in preview."
     }
 
     var selectedCount: Int {
