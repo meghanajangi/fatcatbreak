@@ -1,7 +1,7 @@
 import FamilyControls
 import Foundation
 
-struct SharedActivityStore {
+final class SharedActivityStore {
     private enum Key {
         static let selection = "familyActivitySelection"
         static let breakUntil = "breakUntil"
@@ -24,7 +24,7 @@ struct SharedActivityStore {
 
             return selection
         }
-        nonmutating set {
+        set {
             guard let data = try? PropertyListEncoder().encode(newValue) else { return }
             defaults.set(data, forKey: Key.selection)
         }
@@ -32,7 +32,7 @@ struct SharedActivityStore {
 
     var breakUntil: Date? {
         get { defaults.object(forKey: Key.breakUntil) as? Date }
-        nonmutating set { defaults.set(newValue, forKey: Key.breakUntil) }
+        set { defaults.set(newValue, forKey: Key.breakUntil) }
     }
 
     var usageLimitMinutes: Int {
@@ -40,7 +40,7 @@ struct SharedActivityStore {
             let value = defaults.integer(forKey: Key.usageLimitMinutes)
             return value == 0 ? CatConstants.defaultUsageLimitMinutes : value
         }
-        nonmutating set {
+        set {
             defaults.set(max(1, newValue), forKey: Key.usageLimitMinutes)
         }
     }
@@ -50,7 +50,7 @@ struct SharedActivityStore {
             let value = defaults.integer(forKey: Key.breakMinutes)
             return value == 0 ? CatConstants.defaultBreakMinutes : value
         }
-        nonmutating set {
+        set {
             defaults.set(max(1, newValue), forKey: Key.breakMinutes)
         }
     }

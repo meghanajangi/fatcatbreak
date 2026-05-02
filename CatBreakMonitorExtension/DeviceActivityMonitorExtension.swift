@@ -10,7 +10,12 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         guard activity == CatConstants.monitoredActivity,
               event == CatConstants.socialLimitEvent else { return }
 
-        scheduler.beginBreak()
+        do {
+            try scheduler.beginBreak()
+        } catch {
+            scheduler.clearShield()
+            SharedActivityStore().clearBreak()
+        }
     }
 
     override func intervalDidEnd(for activity: DeviceActivityName) {

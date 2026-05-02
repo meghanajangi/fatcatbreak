@@ -49,7 +49,19 @@ final class AppModel: ObservableObject {
     func saveSettings() {
         sharedStore.usageLimitMinutes = usageLimitMinutes
         sharedStore.breakMinutes = breakMinutes
-        statusMessage = "Settings saved."
+
+        guard isMonitoring else {
+            statusMessage = "Settings saved."
+            return
+        }
+
+        do {
+            try scheduler.startMonitoring(selection: selection)
+            statusMessage = "Settings saved and monitoring restarted."
+        } catch {
+            isMonitoring = false
+            statusMessage = "Settings saved, but monitoring could not restart: \(error.localizedDescription)"
+        }
     }
 
     func startMonitoring() {
@@ -77,9 +89,17 @@ final class AppModel: ObservableObject {
     func previewBreak() {
         sharedStore.selection = selection
         saveSettings()
-        scheduler.beginBreak()
-        breakUntil = sharedStore.breakUntil
-        statusMessage = "Previewing the cat break."
+
+        do {
+            try scheduler.beginBreak()
+            breakUntil = sharedStore.breakUntil
+            statusMessage = "Previewing the cat break."
+        } catch {
+            scheduler.clearShield()
+            sharedStore.clearBreak()
+            breakUntil = nil
+            statusMessage = "Could not start the cat break: \(error.localizedDescription)"
+        }
     }
 
     var selectedCount: Int {

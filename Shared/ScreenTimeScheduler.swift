@@ -39,11 +39,11 @@ struct ScreenTimeScheduler {
         sharedStore.clearBreak()
     }
 
-    func beginBreak() {
+    func beginBreak() throws {
         let until = Date().addingTimeInterval(TimeInterval(sharedStore.breakMinutes * 60))
+        try scheduleBreakWindow(endingAt: until)
         sharedStore.breakUntil = until
         applyShield()
-        scheduleBreakWindow(endingAt: until)
     }
 
     func endBreakIfExpired(now: Date = Date()) {
@@ -74,13 +74,13 @@ struct ScreenTimeScheduler {
         }
     }
 
-    private func scheduleBreakWindow(endingAt endDate: Date) {
+    private func scheduleBreakWindow(endingAt endDate: Date) throws {
         let calendar = Calendar.current
         let start = calendar.dateComponents([.hour, .minute, .second], from: Date())
         let end = calendar.dateComponents([.hour, .minute, .second], from: endDate)
         let schedule = DeviceActivitySchedule(intervalStart: start, intervalEnd: end, repeats: false)
 
-        try? center.startMonitoring(CatConstants.breakActivity, during: schedule)
+        try center.startMonitoring(CatConstants.breakActivity, during: schedule)
     }
 }
 
