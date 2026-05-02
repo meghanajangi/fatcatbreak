@@ -1,5 +1,7 @@
+import AVFoundation
 import Foundation
 import SwiftUI
+import UIKit
 
 struct CatBreakView: View {
     let until: Date
@@ -15,8 +17,13 @@ struct CatBreakView: View {
         VStack(spacing: 20) {
             Spacer()
 
-            GatekeeperCatShape()
-                .frame(width: 300, height: 250)
+            CatBreakVideoView()
+                .frame(width: 320, height: 240)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(.black.opacity(0.12), lineWidth: 1)
+                )
                 .offset(x: entered ? 0 : 340)
                 .offset(y: bounce ? -8 : 6)
                 .animation(.spring(response: 0.72, dampingFraction: 0.66), value: entered)
@@ -74,6 +81,81 @@ struct CatBreakView: View {
         let minutes = secondsRemaining / 60
         let seconds = secondsRemaining % 60
         return "\(minutes):\(String(format: "%02d", seconds))"
+    }
+}
+
+private struct CatBreakVideoView: View {
+    var body: some View {
+        if Bundle.main.url(forResource: "Firefly-fluffy-graycat", withExtension: "mp4") != nil {
+            LoopingVideoView(resourceName: "Firefly-fluffy-graycat", fileExtension: "mp4")
+        } else {
+            GatekeeperCatShape()
+                .padding(16)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(red: 1.0, green: 0.85, blue: 0.54))
+        }
+    }
+}
+
+private struct LoopingVideoView: UIViewRepresentable {
+    let resourceName: String
+    let fileExtension: String
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    func makeUIView(context: Context) -> PlayerContainerView {
+        let view = PlayerContainerView()
+        view.playerLayer.videoGravity = .resizeAspectFill
+
+        guard let url = Bundle.main.url(forResource: resourceName, withExtension: fileExtension) else {
+            return view
+        }
+
+        let player = AVPlayer(url: url)
+        player.isMuted = true
+        player.actionAtItemEnd = .none
+        view.playerLayer.player = player
+        context.coordinator.player = player
+
+        NotificationCenter.default.addObserver(
+            context.coordinator,
+            selector: #selector(Coordinator.restartVideo),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: player.currentItem
+        )
+
+        player.play()
+        return view
+    }
+
+    func updateUIView(_ uiView: PlayerContainerView, context: Context) {
+        context.coordinator.player?.play()
+    }
+
+    static func dismantleUIView(_ uiView: PlayerContainerView, coordinator: Coordinator) {
+        coordinator.player?.pause()
+        NotificationCenter.default.removeObserver(coordinator)
+    }
+
+    final class Coordinator: NSObject {
+        var player: AVPlayer?
+
+        @objc func restartVideo() {
+            player?.seek(to: .zero)
+            player?.play()
+        }
+    }
+}
+
+private final class PlayerContainerView: UIView {
+    override static var layerClass: AnyClass {
+        AVPlayerLayer.self
+    }
+
+    var playerLayer: AVPlayerLayer {
+        layer as! AVPlayerLayer
     }
 }
 

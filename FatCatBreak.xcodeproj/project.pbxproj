@@ -21,6 +21,7 @@
 		10000000000000000000000C /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000009 /* ShieldConfigurationExtension.swift */; };
 		10000000000000000000000D /* CatBreakMonitorExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000D /* CatBreakMonitorExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		10000000000000000000000E /* CatShieldConfigurationExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000E /* CatShieldConfigurationExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		10000000000000000000000F /* Firefly-fluffy-graycat.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000010 /* Firefly-fluffy-graycat.mp4 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		20000000000000000000000D /* CatBreakMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CatBreakMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		20000000000000000000000E /* CatShieldConfigurationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CatShieldConfigurationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		20000000000000000000000F /* FatCatBreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FatCatBreak.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		200000000000000000000010 /* Firefly-fluffy-graycat.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Firefly-fluffy-graycat.mp4"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,9 +100,18 @@
 				200000000000000000000002 /* AppModel.swift */,
 				200000000000000000000003 /* ContentView.swift */,
 				200000000000000000000004 /* CatBreakView.swift */,
+				220000000000000000000007 /* Resources */,
 				20000000000000000000000A /* FatCatBreak.entitlements */,
 			);
 			path = FatCatBreak;
+			sourceTree = "<group>";
+		};
+		220000000000000000000007 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				200000000000000000000010 /* Firefly-fluffy-graycat.mp4 */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		220000000000000000000003 /* Shared */ = {
@@ -226,7 +237,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		700000000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		700000000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (10000000000000000000000F /* Firefly-fluffy-graycat.mp4 in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		700000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		700000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
