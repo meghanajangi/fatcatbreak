@@ -21,6 +21,8 @@ struct CatBreakView: View {
             CatBreakVideoView()
                 .aspectRatio(4 / 3, contentMode: .fit)
                 .frame(maxWidth: 320)
+                .compositingGroup()
+                .blendMode(.multiply)
                 .offset(x: entered ? 0 : 340)
                 .offset(y: bounce ? -8 : 6)
                 .animation(.spring(response: 0.72, dampingFraction: 0.66), value: entered)
